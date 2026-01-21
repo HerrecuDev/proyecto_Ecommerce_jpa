@@ -16,7 +16,7 @@ public class ProductoController {
     public ProductoController(ProductoService productoService) {
         this.productoService = productoService;
     }
-    //CRUD es Crear REead Update Delete
+    //CRUD es Crear Read Update Delete
 
 
     //Para tener mas control:
