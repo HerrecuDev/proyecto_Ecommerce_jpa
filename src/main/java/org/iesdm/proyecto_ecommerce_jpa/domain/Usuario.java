@@ -1,5 +1,6 @@
 package org.iesdm.proyecto_ecommerce_jpa.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.web.JsonPath;
@@ -38,7 +39,7 @@ public class Usuario {
     @Builder.Default
     @ToString.Exclude
 
-
+    @JsonIgnore
     private Set<Carrito> carrito = new HashSet<>();
 
 }

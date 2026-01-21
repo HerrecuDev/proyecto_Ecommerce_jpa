@@ -1,5 +1,6 @@
 package org.iesdm.proyecto_ecommerce_jpa.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,7 +38,7 @@ public class Carrito {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id" , nullable = false)
-
+    @JsonIgnore
     private Usuario usuario;
 
 

@@ -1,5 +1,6 @@
 package org.iesdm.proyecto_ecommerce_jpa.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,5 +32,6 @@ public class Categoria {
     @Builder.Default
     @ToString.Exclude
 
+    @JsonIgnore
     private Set<Producto> productos = new HashSet<>();
 }
