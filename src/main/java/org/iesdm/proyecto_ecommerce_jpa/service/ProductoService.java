@@ -12,9 +12,11 @@ import java.util.List;
 public class ProductoService {
 
     private final ProductoRepository productoRepository;
+    private final CarritoService carritoService;
 
-    public ProductoService(ProductoRepository productoRepository) {
+    public ProductoService(ProductoRepository productoRepository, CarritoService carritoService) {
         this.productoRepository = productoRepository;
+        this.carritoService = carritoService;
     }
 
 
@@ -35,14 +37,16 @@ public class ProductoService {
         return productoRepository.findById(id).orElse(null);
     }
 
-    //Para bsucar los productos mediante su categoria:
+    //Para buscar los productos mediante su categoria:
     public List<Producto> findByCategoria(Categoria categoria){
-
         return productoRepository.findByCategoria(categoria);
     }
 
+    //Delete:
+    public void delete(Long id){
+        productoRepository.deleteById(id);
+    }
 
-    //Para eliminar del carrito los productos :
 
 
 }

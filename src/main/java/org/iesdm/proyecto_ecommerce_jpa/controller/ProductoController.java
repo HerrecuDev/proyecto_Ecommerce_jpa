@@ -1,6 +1,7 @@
 package org.iesdm.proyecto_ecommerce_jpa.controller;
 
 import org.iesdm.proyecto_ecommerce_jpa.domain.Producto;
+import org.iesdm.proyecto_ecommerce_jpa.service.CarritoService;
 import org.iesdm.proyecto_ecommerce_jpa.service.ProductoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,27 +13,62 @@ import java.util.List;
 public class ProductoController {
 
     private final ProductoService productoService;
+    private final CarritoService carritoService;
 
-    public ProductoController(ProductoService productoService) {
+    public ProductoController(ProductoService productoService, CarritoService carritoService) {
         this.productoService = productoService;
+        this.carritoService = carritoService;
     }
-    //CRUD es Crear Read Update Delete
+    //CRUD es Create / Read / Update / Delete
 
 
-    //Para tener mas control:
+    //Read - Todos los productos:
     @GetMapping
     public ResponseEntity<List<Producto>> findAll(){
+        return ResponseEntity.ok(productoService.all());
+    }
 
-        return ResponseEntity.status(204).body(productoService.all());
+    //CREATED al producto:
+    @PostMapping
+    public ResponseEntity<Producto> add(@RequestBody Producto producto){
+
+        return ResponseEntity.ok().body(productoService.save(producto));
+
+        //La I.A dice que seria :
+        //return ResponseEntity.ok(productoService.save(producto));
+    }
+
+    //READ producto segun su id.
+    @GetMapping("/{id}")
+    public ResponseEntity<Producto> findById(@PathVariable Long id){
+        Producto producto = productoService.findById(id);
+        //Si el producto su valor es NULO:
+        if (producto == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(producto);
+    }
+
+    //Update (Añadir el producto seleccionado):
+    @PutMapping("{id}")
+    public ResponseEntity<Producto> updateProducto(@PathVariable Long id ,@RequestBody Producto producto){
+        Producto existente = productoService.findById(id);
+
+        if (existente == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        producto.setId(id);
+
+        return ResponseEntity.ok(productoService.save(producto));
     }
 
 
-    //Create:
-    @PostMapping
-    //@RequstBody convierte el body JSON de lapeticion HTTP a objeto
-    public ResponseEntity<Producto> add(@RequestBody Producto producto){
-
-        return  ResponseEntity.ok().body(productoService.save(producto));
+    //Delete:
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        productoService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 
