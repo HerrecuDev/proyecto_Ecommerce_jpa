@@ -7,10 +7,16 @@ import org.iesdm.proyecto_ecommerce_jpa.service.ProductoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+
 import java.util.List;
+import java.util.Map;
+
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/products")
+@RequestMapping("/api/v1/productos")
 public class ProductoController {
 
     private final ProductoService productoService;
@@ -20,14 +26,29 @@ public class ProductoController {
         this.productoService = productoService;
         this.carritoService = carritoService;
     }
-    //CRUD es Create / Read / Update / Delete
 
-
-    //Read - Todos los productos:
+    //Read - Todos los productos CON FILTROS:
     @GetMapping
-    public ResponseEntity<List<Producto>> findAll(){
-        log.info("Listamos todos los productos");
-        return ResponseEntity.ok(productoService.findall());
+    public ResponseEntity<Map<String, Object>> findAll(
+            @RequestParam(required = false) String buscar,
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamano,
+            @RequestParam(defaultValue = "id") String ordenar) {
+
+        log.info("Listamos productos con filtros - buscar: {}, pagina: {}, tamano: {}, ordenar: {}",
+                buscar, pagina, tamano, ordenar);
+
+        Page<Producto> page = productoService.findAll(buscar, pagina, tamano, ordenar);
+
+        Map<String, Object> response = Map.of(
+                "productos", page.getContent(),
+                "paginaActual", page.getNumber(),
+                "totalElementos", page.getTotalElements(),
+                "totalPaginas", page.getTotalPages(),
+                "tamanoPagina", page.getSize()
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     //CREATED al producto:

@@ -4,6 +4,9 @@ import org.iesdm.proyecto_ecommerce_jpa.domain.Categoria;
 import org.iesdm.proyecto_ecommerce_jpa.domain.Producto;
 import org.iesdm.proyecto_ecommerce_jpa.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,13 +22,22 @@ public class ProductoService {
         this.carritoService = carritoService;
     }
 
-
     //Lista todos los productos:
-    public List<Producto> findall(){
-
-
+    public List<Producto> findall() {
         return productoRepository.findAll();
     }
+
+    //Lista con filtros (buscar, paginar, ordenar):
+    public Page<Producto> findAll(String buscar, int pagina, int tamano, String ordenar) {
+        PageRequest pageRequest = PageRequest.of(pagina, tamano, Sort.by(ordenar));
+
+        if (buscar != null && !buscar.isEmpty()) {
+            return productoRepository.findByNombreContainingIgnoreCase(buscar, pageRequest);
+        }
+
+        return productoRepository.findAll(pageRequest);
+    }
+
     // Guardamos los productos
     public Producto save(Producto producto){
         return  productoRepository.save(producto);
@@ -33,7 +45,6 @@ public class ProductoService {
 
     // Para buscar los productos mediante su id
     public Producto findById(Long id){
-
         return productoRepository.findById(id).orElse(null);
     }
 
@@ -46,7 +57,4 @@ public class ProductoService {
     public void delete(Long id){
         productoRepository.deleteById(id);
     }
-
-
-
 }

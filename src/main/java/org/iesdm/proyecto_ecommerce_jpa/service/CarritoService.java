@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.iesdm.proyecto_ecommerce_jpa.domain.Carrito;
 import org.iesdm.proyecto_ecommerce_jpa.domain.Producto;
 import org.iesdm.proyecto_ecommerce_jpa.domain.Usuario;
+import org.iesdm.proyecto_ecommerce_jpa.dto.CarritoDTO;
 import org.iesdm.proyecto_ecommerce_jpa.repository.CarritoRepository;
 import org.iesdm.proyecto_ecommerce_jpa.repository.ProductoRepository;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CarritoService {
@@ -37,6 +39,36 @@ public class CarritoService {
 
     public void deleteById(Long id) {
         carritoRepository.deleteById(id);
+    }
+
+    //Obtener carrito de un usuario con total
+    public CarritoDTO getCarritoConTotal(Long usuarioId) {
+        List<Carrito> items = carritoRepository.findByUsuarioId(usuarioId);
+
+        List<CarritoDTO.ProductoCarrito> productos = items.stream()
+                .map(item -> {
+                    BigDecimal precio = item.getProducto().getPrecio();
+                    BigDecimal cantidad = item.getCantidad();
+                    BigDecimal subtotal = precio.multiply(cantidad);
+
+                    return CarritoDTO.ProductoCarrito.builder()
+                            .productoId(item.getProducto().getId())
+                            .nombre(item.getProducto().getNombre())
+                            .precio(precio)
+                            .cantidad(cantidad)
+                            .subtotal(subtotal)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        BigDecimal total = productos.stream()
+                .map(CarritoDTO.ProductoCarrito::getSubtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return CarritoDTO.builder()
+                .productos(productos)
+                .total(total)
+                .build();
     }
 
     //Añadimos al carrito:

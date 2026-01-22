@@ -1,15 +1,14 @@
 package org.iesdm.proyecto_ecommerce_jpa.controller;
 
-import org.iesdm.proyecto_ecommerce_jpa.domain.Carrito;
+import lombok.extern.slf4j.Slf4j;
+import org.iesdm.proyecto_ecommerce_jpa.dto.CarritoDTO;
 import org.iesdm.proyecto_ecommerce_jpa.service.CarritoService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
+@Slf4j
 @RestController
 @RequestMapping("api/v2/carrito")
 public class CarritoController {
@@ -21,13 +20,19 @@ public class CarritoController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Carrito> addToCarrito (@RequestParam Long usuarioId ,
-                                                 @RequestParam Long productoId ,
-                                                 @RequestParam BigDecimal cantidad){
+    public ResponseEntity<CarritoDTO> addToCarrito (@RequestParam Long usuarioId ,
+                                                     @RequestParam Long productoId ,
+                                                     @RequestParam BigDecimal cantidad){
 
-        Carrito carrito = carritoService.addToCarrito(usuarioId,productoId,cantidad);
-        return ResponseEntity.ok(carrito);
+        log.info("Añadiendo al carrito - usuarioId: {}, productoId: {}, cantidad: {}",
+                usuarioId, productoId, cantidad);
 
+        // Primero guardamos el producto en el carrito
+        carritoService.addToCarrito(usuarioId, productoId, cantidad);
 
+        // Luego obtenemos el carrito completo con el total
+        CarritoDTO response = carritoService.getCarritoConTotal(usuarioId);
+
+        return ResponseEntity.ok(response);
     }
 }
