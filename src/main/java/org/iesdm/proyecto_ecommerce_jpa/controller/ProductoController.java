@@ -1,5 +1,6 @@
 package org.iesdm.proyecto_ecommerce_jpa.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.iesdm.proyecto_ecommerce_jpa.domain.Producto;
 import org.iesdm.proyecto_ecommerce_jpa.service.CarritoService;
 import org.iesdm.proyecto_ecommerce_jpa.service.ProductoService;
@@ -7,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/products")
 public class ProductoController {
@@ -25,13 +26,16 @@ public class ProductoController {
     //Read - Todos los productos:
     @GetMapping
     public ResponseEntity<List<Producto>> findAll(){
-        return ResponseEntity.ok(productoService.all());
+        log.info("Listamos todos los productos");
+        return ResponseEntity.ok(productoService.findall());
     }
 
     //CREATED al producto:
     @PostMapping
-    public ResponseEntity<Producto> add(@RequestBody Producto producto){
+    public ResponseEntity<Producto> CrearProducto(@RequestBody Producto producto){
 
+        //Creamos el producto
+        log.info("Producto Creado :" + producto);
         return ResponseEntity.ok().body(productoService.save(producto));
 
         //La I.A dice que seria :
