@@ -22,12 +22,9 @@ public class ProductoService {
         this.carritoService = carritoService;
     }
 
-    //Lista todos los productos:
-    public List<Producto> findall() {
-        return productoRepository.findAll();
-    }
 
-    //Lista con filtros (buscar, paginar, ordenar):
+
+    //Lista todos los productos con filtros (buscar, paginar, ordenar):
     public Page<Producto> findAll(String buscar, int pagina, int tamano, String ordenar) {
         PageRequest pageRequest = PageRequest.of(pagina, tamano, Sort.by(ordenar));
 
@@ -50,6 +47,7 @@ public class ProductoService {
 
     //Para buscar los productos mediante su categoria:
     public List<Producto> findByCategoria(Categoria categoria){
+
         return productoRepository.findByCategoria(categoria);
     }
 
