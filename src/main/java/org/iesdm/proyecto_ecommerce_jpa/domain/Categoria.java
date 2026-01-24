@@ -28,7 +28,7 @@ public class Categoria {
 
 
     //Al tener una relacion de 1 @ * con producto
-    @OneToMany( mappedBy = "categoria")
+    @OneToMany(mappedBy = "categoria")
     @Builder.Default
     @ToString.Exclude
 

@@ -59,8 +59,6 @@ public class ProductoController {
         log.info("Producto Creado :" + producto);
         return ResponseEntity.ok().body(productoService.save(producto));
 
-        //La I.A dice que seria :
-        //return ResponseEntity.ok(productoService.save(producto));
     }
 
     //READ producto segun su id.
